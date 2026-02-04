@@ -1,10 +1,50 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <title>Multi Calculator Hub</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
+  :root {
+    --bg-primary: #0f172a;
+    --bg-secondary: rgba(30, 41, 59, 0.6);
+    --bg-card: rgba(30, 41, 59, 0.6);
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --border-color: rgba(148, 163, 184, 0.1);
+    --input-bg: rgba(15, 23, 42, 0.5);
+    --accent: #22c55e;
+    --accent-hover: #16a34a;
+    --shadow: rgba(0, 0, 0, 0.3);
+    --result-bg: rgba(34, 197, 94, 0.1);
+    --result-border: rgba(34, 197, 94, 0.2);
+    --result-text: #4ade80;
+    --error-bg: rgba(239, 68, 68, 0.1);
+    --error-border: rgba(239, 68, 68, 0.2);
+    --error-text: #f87171;
+    --header-bg: rgba(15, 23, 42, 0.95);
+  }
+
+  [data-theme="light"] {
+    --bg-primary: #f8fafc;
+    --bg-secondary: #ffffff;
+    --bg-card: #ffffff;
+    --text-primary: #0f172a;
+    --text-secondary: #64748b;
+    --border-color: rgba(148, 163, 184, 0.2);
+    --input-bg: #f1f5f9;
+    --accent: #16a34a;
+    --accent-hover: #15803d;
+    --shadow: rgba(0, 0, 0, 0.1);
+    --result-bg: rgba(34, 197, 94, 0.1);
+    --result-border: rgba(34, 197, 94, 0.3);
+    --result-text: #15803d;
+    --error-bg: rgba(239, 68, 68, 0.05);
+    --error-border: rgba(239, 68, 68, 0.3);
+    --error-text: #dc2626;
+    --header-bg: rgba(255, 255, 255, 0.9);
+  }
+
   * {
     box-sizing: border-box;
     margin: 0;
@@ -13,157 +53,248 @@
 
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-    color: #f1f5f9;
+    background: var(--bg-primary);
+    color: var(--text-primary);
     min-height: 100vh;
     line-height: 1.6;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   header {
-    background: rgba(15, 23, 42, 0.95);
+    background: var(--header-bg);
     backdrop-filter: blur(10px);
-    padding: 24px;
-    text-align: center;
-    font-size: 26px;
+    padding: 20px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 4px 20px var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    transition: all 0.3s ease;
+  }
+
+  .logo {
+    font-size: 24px;
     font-weight: 700;
     letter-spacing: 0.5px;
-    border-bottom: 1px solid rgba(34, 197, 94, 0.3);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  }
-
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 40px 20px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 24px;
-  }
-
-  .card {
-    background: rgba(30, 41, 59, 0.6);
-    border: 1px solid rgba(148, 163, 184, 0.1);
-    border-radius: 16px;
-    padding: 28px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    backdrop-filter: blur(10px);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #22c55e, #16a34a);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
-  .card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 20px 40px rgba(34, 197, 94, 0.1);
-    border-color: rgba(34, 197, 94, 0.3);
-  }
-
-  .card:hover::before {
-    opacity: 1;
-  }
-
-  h2 {
-    font-size: 22px;
-    margin-bottom: 20px;
     display: flex;
     align-items: center;
     gap: 10px;
-    color: #22c55e;
+  }
+
+  .theme-toggle {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 50px;
+    padding: 8px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+    user-select: none;
+  }
+
+  .theme-toggle:hover {
+    transform: scale(1.05);
+    border-color: var(--accent);
+  }
+
+  .theme-icon {
+    font-size: 18px;
+    transition: transform 0.3s ease;
+  }
+
+  .theme-toggle:hover .theme-icon {
+    transform: rotate(20deg);
+  }
+
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+
+  /* Tabs Navigation */
+  .tabs-nav {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    background: var(--bg-secondary);
+    padding: 8px;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(10px);
+  }
+
+  .tab-btn {
+    flex: 1;
+    padding: 14px 24px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .tab-btn:hover {
+    color: var(--text-primary);
+    background: rgba(148, 163, 184, 0.1);
+  }
+
+  .tab-btn.active {
+    background: var(--accent);
+    color: white;
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+  }
+
+  .tab-btn .icon {
+    font-size: 20px;
+  }
+
+  /* Tab Content */
+  .tab-content {
+    display: none;
+    animation: fadeIn 0.4s ease;
+  }
+
+  .tab-content.active {
+    display: block;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 32px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 40px var(--shadow);
+    transition: all 0.3s ease;
+  }
+
+  .card:hover {
+    box-shadow: 0 20px 60px var(--shadow);
+  }
+
+  .calculator-header {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .calculator-header h2 {
+    font-size: 28px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--accent);
+  }
+
+  .calculator-header p {
+    color: var(--text-secondary);
+    font-size: 15px;
   }
 
   .input-group {
-    margin-bottom: 16px;
+    margin-bottom: 20px;
   }
 
   label {
     display: block;
     font-size: 13px;
-    color: #94a3b8;
-    margin-bottom: 6px;
-    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
 
   input {
     width: 100%;
-    padding: 14px 16px;
-    border-radius: 10px;
-    border: 1px solid rgba(148, 163, 184, 0.2);
-    background: rgba(15, 23, 42, 0.5);
-    color: #f1f5f9;
+    padding: 16px;
+    border-radius: 12px;
+    border: 2px solid var(--border-color);
+    background: var(--input-bg);
+    color: var(--text-primary);
     font-size: 16px;
     transition: all 0.2s ease;
   }
 
   input:focus {
     outline: none;
-    border-color: #22c55e;
-    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.1);
   }
 
   input::placeholder {
-    color: #64748b;
-  }
-
-  button {
-    width: 100%;
-    padding: 14px;
-    margin-top: 8px;
-    border-radius: 10px;
-    border: none;
-    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-    color: #ffffff;
-    font-weight: 700;
-    font-size: 16px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    position: relative;
-    overflow: hidden;
-  }
-
-  button:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(34, 197, 94, 0.3);
-  }
-
-  button:active:not(:disabled) {
-    transform: translateY(0);
-  }
-
-  button:disabled {
+    color: var(--text-secondary);
     opacity: 0.6;
-    cursor: not-allowed;
   }
 
-  .result {
-    margin-top: 16px;
+  button.calculate-btn {
+    width: 100%;
     padding: 16px;
-    border-radius: 10px;
-    background: rgba(34, 197, 94, 0.1);
-    border: 1px solid rgba(34, 197, 94, 0.2);
-    font-weight: 600;
-    font-size: 16px;
-    color: #4ade80;
-    min-height: 56px;
+    margin-top: 8px;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+    color: white;
+    font-weight: 700;
+    font-size: 17px;
+    cursor: pointer;
+    transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 8px;
+  }
+
+  button.calculate-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(34, 197, 94, 0.4);
+  }
+
+  button.calculate-btn:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  .result {
+    margin-top: 24px;
+    padding: 24px;
+    border-radius: 16px;
+    background: var(--result-bg);
+    border: 2px solid var(--result-border);
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--result-text);
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     text-align: center;
+    gap: 8px;
     opacity: 0;
     transform: translateY(-10px);
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .result.show {
@@ -172,90 +303,162 @@
   }
 
   .result.error {
-    background: rgba(239, 68, 68, 0.1);
-    border-color: rgba(239, 68, 68, 0.2);
-    color: #f87171;
+    background: var(--error-bg);
+    border-color: var(--error-border);
+    color: var(--error-text);
+  }
+
+  .result-main {
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  .result-sub {
+    font-size: 14px;
+    opacity: 0.9;
+    font-weight: 500;
   }
 
   footer {
     text-align: center;
-    padding: 30px 20px;
+    padding: 40px 20px;
     font-size: 14px;
-    color: #64748b;
-    border-top: 1px solid rgba(148, 163, 184, 0.1);
-    margin-top: 40px;
-  }
-
-  .icon {
-    font-size: 24px;
+    color: var(--text-secondary);
+    border-top: 1px solid var(--border-color);
+    margin-top: 60px;
   }
 
   @media (max-width: 640px) {
     header {
-      font-size: 22px;
-      padding: 20px;
+      padding: 16px 20px;
+    }
+    
+    .logo {
+      font-size: 20px;
+    }
+    
+    .theme-toggle span {
+      display: none;
     }
     
     .container {
       padding: 20px 16px;
-      gap: 16px;
+    }
+    
+    .tabs-nav {
+      padding: 6px;
+    }
+    
+    .tab-btn {
+      padding: 12px 16px;
+      font-size: 14px;
+    }
+    
+    .tab-btn .icon {
+      font-size: 24px;
     }
     
     .card {
-      padding: 20px;
+      padding: 24px;
+    }
+    
+    .calculator-header h2 {
+      font-size: 24px;
     }
   }
 
-  /* Loading animation */
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-  }
-
-  .loading {
-    animation: pulse 1.5s ease-in-out infinite;
+  /* Smooth transitions for theme switch */
+  * {
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
   }
 </style>
 
 </head>
 <body>
 
-<header>🧮 Multi Calculator Hub</header>
+<header>
+  <div class="logo">🧮 Multi Calculator Hub</div>
+  <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+    <span class="theme-icon" id="themeIcon">🌙</span>
+    <span id="themeText">Dark</span>
+  </button>
+</header>
 
 <div class="container">
 
-  <!-- BMI Calculator -->
-  <div class="card">
-    <h2><span class="icon">⚖️</span> BMI Calculator</h2>
-    <div class="input-group">
-      <label for="weight">Weight</label>
-      <input id="weight" type="number" placeholder="Enter weight in kg" min="1" step="0.1">
-    </div>
-    <div class="input-group">
-      <label for="height">Height</label>
-      <input id="height" type="number" placeholder="Enter height in cm" min="1" step="0.1">
-    </div>
-    <button onclick="calcBMI()" id="bmiBtn">Calculate BMI</button>
-    <div id="bmiResult" class="result">Enter your details above</div>
+  <!-- Tabs Navigation -->
+  <div class="tabs-nav">
+    <button class="tab-btn active" onclick="switchTab('bmi')" id="tab-bmi">
+      <span class="icon">⚖️</span>
+      <span>BMI</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('emi')" id="tab-emi">
+      <span class="icon">💰</span>
+      <span>EMI</span>
+    </button>
   </div>
 
-  <!-- EMI Calculator -->
-  <div class="card">
-    <h2><span class="icon">💰</span> EMI Calculator</h2>
-    <div class="input-group">
-      <label for="loan">Loan Amount</label>
-      <input id="loan" type="number" placeholder="Principal amount" min="1" step="1000">
+  <!-- BMI Calculator Tab -->
+  <div id="bmi" class="tab-content active">
+    <div class="card">
+      <div class="calculator-header">
+        <h2>⚖️ BMI Calculator</h2>
+        <p>Calculate your Body Mass Index and health category</p>
+      </div>
+      
+      <div class="input-group">
+        <label for="weight">Weight (kg)</label>
+        <input id="weight" type="number" placeholder="e.g., 70" min="1" step="0.1" onkeypress="handleEnter(event, 'bmi')">
+      </div>
+      
+      <div class="input-group">
+        <label for="height">Height (cm)</label>
+        <input id="height" type="number" placeholder="e.g., 175" min="1" step="0.1" onkeypress="handleEnter(event, 'bmi')">
+      </div>
+      
+      <button class="calculate-btn" onclick="calcBMI()" id="bmiBtn">
+        <span>Calculate BMI</span>
+        <span>→</span>
+      </button>
+      
+      <div id="bmiResult" class="result">
+        <div>Enter your weight and height to get started</div>
+      </div>
     </div>
-    <div class="input-group">
-      <label for="rate">Annual Interest Rate</label>
-      <input id="rate" type="number" placeholder="Annual interest %" min="0.1" step="0.1">
+  </div>
+
+  <!-- EMI Calculator Tab -->
+  <div id="emi" class="tab-content">
+    <div class="card">
+      <div class="calculator-header">
+        <h2>💰 EMI Calculator</h2>
+        <p>Calculate your Equated Monthly Installment</p>
+      </div>
+      
+      <div class="input-group">
+        <label for="loan">Loan Amount ($)</label>
+        <input id="loan" type="number" placeholder="e.g., 50000" min="1" step="1000" onkeypress="handleEnter(event, 'emi')">
+      </div>
+      
+      <div class="input-group">
+        <label for="rate">Annual Interest Rate (%)</label>
+        <input id="rate" type="number" placeholder="e.g., 7.5" min="0.1" step="0.1" onkeypress="handleEnter(event, 'emi')">
+      </div>
+      
+      <div class="input-group">
+        <label for="years">Loan Duration (Years)</label>
+        <input id="years" type="number" placeholder="e.g., 5" min="1" max="50" step="0.5" onkeypress="handleEnter(event, 'emi')">
+      </div>
+      
+      <button class="calculate-btn" onclick="calcEMI()" id="emiBtn">
+        <span>Calculate EMI</span>
+        <span>→</span>
+      </button>
+      
+      <div id="emiResult" class="result">
+        <div>Enter loan details to calculate your EMI</div>
+      </div>
     </div>
-    <div class="input-group">
-      <label for="years">Loan Duration</label>
-      <input id="years" type="number" placeholder="Years" min="1" max="50" step="0.5">
-    </div>
-    <button onclick="calcEMI()" id="emiBtn">Calculate EMI</button>
-    <div id="emiResult" class="result">Enter loan details above</div>
   </div>
 
 </div>
@@ -265,7 +468,56 @@
 </footer>
 
 <script>
-  // Utility function to format currency
+  // Theme Management
+  function initTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    updateThemeUI(savedTheme);
+  }
+
+  function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    updateThemeUI(newTheme);
+  }
+
+  function updateThemeUI(theme) {
+    const icon = document.getElementById('themeIcon');
+    const text = document.getElementById('themeText');
+    
+    if (theme === 'dark') {
+      icon.textContent = '🌙';
+      text.textContent = 'Dark';
+    } else {
+      icon.textContent = '☀️';
+      text.textContent = 'Light';
+    }
+  }
+
+  // Tab Management
+  function switchTab(tabName) {
+    // Hide all tabs
+    document.querySelectorAll('.tab-content').forEach(tab => {
+      tab.classList.remove('active');
+    });
+    
+    // Remove active class from all buttons
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    
+    // Show selected tab
+    document.getElementById(tabName).classList.add('active');
+    document.getElementById('tab-' + tabName).classList.add('active');
+    
+    // Clear results when switching
+    hideResult(tabName + 'Result');
+  }
+
+  // Utility Functions
   const formatCurrency = (num) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -275,52 +527,70 @@
     }).format(num);
   };
 
-  // Utility function to show result with animation
-  const showResult = (elementId, message, isError = false) => {
+  const showResult = (elementId, mainText, subText = '', isError = false) => {
     const element = document.getElementById(elementId);
     element.classList.remove('show', 'error');
     
-    // Small delay to allow transition reset
     setTimeout(() => {
-      element.textContent = message;
+      element.innerHTML = `
+        <div class="result-main">${mainText}</div>
+        ${subText ? `<div class="result-sub">${subText}</div>` : ''}
+      `;
       element.classList.add('show');
       if (isError) element.classList.add('error');
     }, 50);
+  };
+
+  const hideResult = (elementId) => {
+    const element = document.getElementById(elementId);
+    element.classList.remove('show');
+  };
+
+  const handleEnter = (e, calculator) => {
+    if (e.key === 'Enter') {
+      if (calculator === 'bmi') calcBMI();
+      else if (calculator === 'emi') calcEMI();
+    }
   };
 
   // BMI Calculator
   function calcBMI() {
     const weight = parseFloat(document.getElementById("weight").value);
     const height = parseFloat(document.getElementById("height").value);
-    const btn = document.getElementById("bmiBtn");
     
-    // Validation
     if (!weight || weight <= 0) {
-      showResult("bmiResult", "Please enter a valid weight", true);
+      showResult("bmiResult", "⚠️ Invalid Weight", "Please enter a valid weight in kg", true);
       document.getElementById("weight").focus();
       return;
     }
     
     if (!height || height <= 0) {
-      showResult("bmiResult", "Please enter a valid height", true);
+      showResult("bmiResult", "⚠️ Invalid Height", "Please enter a valid height in cm", true);
       document.getElementById("height").focus();
       return;
     }
     
-    // Calculate
     const heightInMeters = height / 100;
     const bmi = weight / (heightInMeters * heightInMeters);
     const bmiValue = bmi.toFixed(1);
     
-    // Determine category
     let category = "";
-    let emoji = "";
-    if (bmi < 18.5) { category = "Underweight"; emoji = "⚡"; }
-    else if (bmi < 25) { category = "Normal weight"; emoji = "✅"; }
-    else if (bmi < 30) { category = "Overweight"; emoji = "⚠️"; }
-    else { category = "Obese"; emoji = "🔴"; }
+    let color = "";
+    if (bmi < 18.5) { 
+      category = "Underweight"; 
+      color = "⚡";
+    } else if (bmi < 25) { 
+      category = "Normal Weight"; 
+      color = "✅";
+    } else if (bmi < 30) { 
+      category = "Overweight"; 
+      color = "⚠️";
+    } else { 
+      category = "Obese"; 
+      color = "🔴";
+    }
     
-    showResult("bmiResult", `${emoji} BMI: ${bmiValue} — ${category}`);
+    showResult("bmiResult", `${color} ${bmiValue}`, `Category: ${category}`);
   }
 
   // EMI Calculator
@@ -329,26 +599,24 @@
     const rate = parseFloat(document.getElementById("rate").value);
     const years = parseFloat(document.getElementById("years").value);
     
-    // Validation
     if (!principal || principal <= 0) {
-      showResult("emiResult", "Please enter a valid loan amount", true);
+      showResult("emiResult", "⚠️ Invalid Amount", "Please enter a valid loan amount", true);
       document.getElementById("loan").focus();
       return;
     }
     
     if (!rate || rate <= 0) {
-      showResult("emiResult", "Please enter a valid interest rate", true);
+      showResult("emiResult", "⚠️ Invalid Rate", "Please enter a valid interest rate", true);
       document.getElementById("rate").focus();
       return;
     }
     
     if (!years || years <= 0) {
-      showResult("emiResult", "Please enter a valid duration", true);
+      showResult("emiResult", "⚠️ Invalid Duration", "Please enter a valid loan duration", true);
       document.getElementById("years").focus();
       return;
     }
     
-    // Calculate EMI using standard formula
     const monthlyRate = rate / 1200;
     const months = years * 12;
     
@@ -364,32 +632,13 @@
     const totalInterest = totalPayment - principal;
     
     showResult("emiResult", 
-      `📊 Monthly: ${formatCurrency(emi)}\n` +
-      `💸 Total Interest: ${formatCurrency(totalInterest)}`
+      `📊 ${formatCurrency(emi)}/month`,
+      `Total Interest: ${formatCurrency(totalInterest)} over ${years} years`
     );
   }
 
-  // Add Enter key support for all inputs
-  document.querySelectorAll('input').forEach(input => {
-    input.addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') {
-        // Find the closest card and trigger its button
-        const card = this.closest('.card');
-        const btn = card.querySelector('button');
-        btn.click();
-      }
-    });
-  });
-
-  // Add input formatting for better UX
-  document.querySelectorAll('input[type="number"]').forEach(input => {
-    input.addEventListener('blur', function() {
-      if (this.value && !isNaN(this.value)) {
-        // Remove leading zeros
-        this.value = parseFloat(this.value);
-      }
-    });
-  });
+  // Initialize
+  initTheme();
 </script>
 
 </body>

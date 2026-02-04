@@ -7,63 +7,110 @@
   <style>
   * {
     box-sizing: border-box;
-  }
-
-  body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-    background: linear-gradient(135deg, #020617, #020617);
-    color: #e5e7eb;
     margin: 0;
     padding: 0;
   }
 
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+    color: #f1f5f9;
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
   header {
-    background: rgba(15, 23, 42, 0.9);
-    padding: 18px;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 24px;
     text-align: center;
-    font-size: 22px;
+    font-size: 26px;
     font-weight: 700;
     letter-spacing: 0.5px;
-    border-bottom: 1px solid #1e293b;
+    border-bottom: 1px solid rgba(34, 197, 94, 0.3);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   }
 
   .container {
-    max-width: 1100px;
-    margin: auto;
-    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
   }
 
   .card {
-    background: #020617;
-    border: 1px solid #1e293b;
-    border-radius: 14px;
-    padding: 20px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    border-radius: 16px;
+    padding: 28px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #22c55e, #16a34a);
+    opacity: 0;
+    transition: opacity 0.3s ease;
   }
 
   .card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 30px rgba(34, 197, 94, 0.15);
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px rgba(34, 197, 94, 0.1);
+    border-color: rgba(34, 197, 94, 0.3);
+  }
+
+  .card:hover::before {
+    opacity: 1;
   }
 
   h2 {
-    margin-top: 0;
-    margin-bottom: 10px;
-    font-size: 20px;
+    font-size: 22px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #22c55e;
+  }
+
+  .input-group {
+    margin-bottom: 16px;
+  }
+
+  label {
+    display: block;
+    font-size: 13px;
+    color: #94a3b8;
+    margin-bottom: 6px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
 
   input {
     width: 100%;
-    padding: 12px;
-    margin: 8px 0;
-    border-radius: 8px;
-    border: 1px solid #1e293b;
-    background: #020617;
-    color: #e5e7eb;
-    font-size: 15px;
+    padding: 14px 16px;
+    border-radius: 10px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    background: rgba(15, 23, 42, 0.5);
+    color: #f1f5f9;
+    font-size: 16px;
+    transition: all 0.2s ease;
+  }
+
+  input:focus {
+    outline: none;
+    border-color: #22c55e;
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
   }
 
   input::placeholder {
@@ -72,32 +119,101 @@
 
   button {
     width: 100%;
-    padding: 12px;
-    margin-top: 10px;
+    padding: 14px;
+    margin-top: 8px;
     border-radius: 10px;
     border: none;
-    background: linear-gradient(135deg, #22c55e, #16a34a);
-    color: #022c22;
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    color: #ffffff;
     font-weight: 700;
-    font-size: 15px;
+    font-size: 16px;
     cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
   }
 
-  button:hover {
-    opacity: 0.9;
+  button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(34, 197, 94, 0.3);
   }
 
-  p {
-    margin-top: 10px;
+  button:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .result {
+    margin-top: 16px;
+    padding: 16px;
+    border-radius: 10px;
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.2);
     font-weight: 600;
+    font-size: 16px;
+    color: #4ade80;
+    min-height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+  }
+
+  .result.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .result.error {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.2);
+    color: #f87171;
   }
 
   footer {
     text-align: center;
-    padding: 20px;
-    font-size: 13px;
-    color: #94a3b8;
-    border-top: 1px solid #1e293b;
+    padding: 30px 20px;
+    font-size: 14px;
+    color: #64748b;
+    border-top: 1px solid rgba(148, 163, 184, 0.1);
+    margin-top: 40px;
+  }
+
+  .icon {
+    font-size: 24px;
+  }
+
+  @media (max-width: 640px) {
+    header {
+      font-size: 22px;
+      padding: 20px;
+    }
+    
+    .container {
+      padding: 20px 16px;
+      gap: 16px;
+    }
+    
+    .card {
+      padding: 20px;
+    }
+  }
+
+  /* Loading animation */
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  .loading {
+    animation: pulse 1.5s ease-in-out infinite;
   }
 </style>
 
@@ -108,47 +224,172 @@
 
 <div class="container">
 
-  <!-- BMI -->
+  <!-- BMI Calculator -->
   <div class="card">
-    <h2>BMI Calculator</h2>
-    <input id="weight" type="number" placeholder="Weight (kg)">
-    <input id="height" type="number" placeholder="Height (cm)">
-    <button onclick="calcBMI()">Calculate</button>
-    <p id="bmiResult"></p>
+    <h2><span class="icon">⚖️</span> BMI Calculator</h2>
+    <div class="input-group">
+      <label for="weight">Weight</label>
+      <input id="weight" type="number" placeholder="Enter weight in kg" min="1" step="0.1">
+    </div>
+    <div class="input-group">
+      <label for="height">Height</label>
+      <input id="height" type="number" placeholder="Enter height in cm" min="1" step="0.1">
+    </div>
+    <button onclick="calcBMI()" id="bmiBtn">Calculate BMI</button>
+    <div id="bmiResult" class="result">Enter your details above</div>
   </div>
 
-  <!-- EMI -->
+  <!-- EMI Calculator -->
   <div class="card">
-    <h2>EMI Calculator</h2>
-    <input id="loan" type="number" placeholder="Loan Amount">
-    <input id="rate" type="number" placeholder="Interest %">
-    <input id="years" type="number" placeholder="Years">
-    <button onclick="calcEMI()">Calculate</button>
-    <p id="emiResult"></p>
+    <h2><span class="icon">💰</span> EMI Calculator</h2>
+    <div class="input-group">
+      <label for="loan">Loan Amount</label>
+      <input id="loan" type="number" placeholder="Principal amount" min="1" step="1000">
+    </div>
+    <div class="input-group">
+      <label for="rate">Annual Interest Rate</label>
+      <input id="rate" type="number" placeholder="Annual interest %" min="0.1" step="0.1">
+    </div>
+    <div class="input-group">
+      <label for="years">Loan Duration</label>
+      <input id="years" type="number" placeholder="Years" min="1" max="50" step="0.5">
+    </div>
+    <button onclick="calcEMI()" id="emiBtn">Calculate EMI</button>
+    <div id="emiResult" class="result">Enter loan details above</div>
   </div>
 
 </div>
 
 <footer>
-  © 2026 Multi Calculator Hub
+  © 2026 Multi Calculator Hub • Built with precision
 </footer>
 
 <script>
+  // Utility function to format currency
+  const formatCurrency = (num) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(num);
+  };
+
+  // Utility function to show result with animation
+  const showResult = (elementId, message, isError = false) => {
+    const element = document.getElementById(elementId);
+    element.classList.remove('show', 'error');
+    
+    // Small delay to allow transition reset
+    setTimeout(() => {
+      element.textContent = message;
+      element.classList.add('show');
+      if (isError) element.classList.add('error');
+    }, 50);
+  };
+
+  // BMI Calculator
   function calcBMI() {
-    let w = document.getElementById("weight").value;
-    let h = document.getElementById("height").value / 100;
-    let bmi = (w / (h * h)).toFixed(2);
-    document.getElementById("bmiResult").innerText = "Your BMI: " + bmi;
+    const weight = parseFloat(document.getElementById("weight").value);
+    const height = parseFloat(document.getElementById("height").value);
+    const btn = document.getElementById("bmiBtn");
+    
+    // Validation
+    if (!weight || weight <= 0) {
+      showResult("bmiResult", "Please enter a valid weight", true);
+      document.getElementById("weight").focus();
+      return;
+    }
+    
+    if (!height || height <= 0) {
+      showResult("bmiResult", "Please enter a valid height", true);
+      document.getElementById("height").focus();
+      return;
+    }
+    
+    // Calculate
+    const heightInMeters = height / 100;
+    const bmi = weight / (heightInMeters * heightInMeters);
+    const bmiValue = bmi.toFixed(1);
+    
+    // Determine category
+    let category = "";
+    let emoji = "";
+    if (bmi < 18.5) { category = "Underweight"; emoji = "⚡"; }
+    else if (bmi < 25) { category = "Normal weight"; emoji = "✅"; }
+    else if (bmi < 30) { category = "Overweight"; emoji = "⚠️"; }
+    else { category = "Obese"; emoji = "🔴"; }
+    
+    showResult("bmiResult", `${emoji} BMI: ${bmiValue} — ${category}`);
   }
 
+  // EMI Calculator
   function calcEMI() {
-    let P = document.getElementById("loan").value;
-    let r = document.getElementById("rate").value / 1200;
-    let n = document.getElementById("years").value * 12;
-    let emi = (P * r * Math.pow(1+r, n)) / (Math.pow(1+r, n)-1);
-    document.getElementById("emiResult").innerText =
-      "Monthly EMI: " + emi.toFixed(2);
+    const principal = parseFloat(document.getElementById("loan").value);
+    const rate = parseFloat(document.getElementById("rate").value);
+    const years = parseFloat(document.getElementById("years").value);
+    
+    // Validation
+    if (!principal || principal <= 0) {
+      showResult("emiResult", "Please enter a valid loan amount", true);
+      document.getElementById("loan").focus();
+      return;
+    }
+    
+    if (!rate || rate <= 0) {
+      showResult("emiResult", "Please enter a valid interest rate", true);
+      document.getElementById("rate").focus();
+      return;
+    }
+    
+    if (!years || years <= 0) {
+      showResult("emiResult", "Please enter a valid duration", true);
+      document.getElementById("years").focus();
+      return;
+    }
+    
+    // Calculate EMI using standard formula
+    const monthlyRate = rate / 1200;
+    const months = years * 12;
+    
+    let emi;
+    if (monthlyRate === 0) {
+      emi = principal / months;
+    } else {
+      emi = (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) / 
+            (Math.pow(1 + monthlyRate, months) - 1);
+    }
+    
+    const totalPayment = emi * months;
+    const totalInterest = totalPayment - principal;
+    
+    showResult("emiResult", 
+      `📊 Monthly: ${formatCurrency(emi)}\n` +
+      `💸 Total Interest: ${formatCurrency(totalInterest)}`
+    );
   }
+
+  // Add Enter key support for all inputs
+  document.querySelectorAll('input').forEach(input => {
+    input.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        // Find the closest card and trigger its button
+        const card = this.closest('.card');
+        const btn = card.querySelector('button');
+        btn.click();
+      }
+    });
+  });
+
+  // Add input formatting for better UX
+  document.querySelectorAll('input[type="number"]').forEach(input => {
+    input.addEventListener('blur', function() {
+      if (this.value && !isNaN(this.value)) {
+        // Remove leading zeros
+        this.value = parseFloat(this.value);
+      }
+    });
+  });
 </script>
 
 </body>

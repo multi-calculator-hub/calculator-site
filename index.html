@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Multi Calculator Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    header {
+      background: #020617;
+      padding: 20px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .container {
+      padding: 20px;
+    }
+    .card {
+      background: #1e293b;
+      padding: 20px;
+      margin: 15px auto;
+      max-width: 400px;
+      border-radius: 10px;
+    }
+    input, button {
+      width: 90%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 5px;
+      border: none;
+    }
+    button {
+      background: #22c55e;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    footer {
+      margin-top: 30px;
+      font-size: 14px;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+
+<header>🧮 Multi Calculator Hub</header>
+
+<div class="container">
+
+  <!-- BMI -->
+  <div class="card">
+    <h2>BMI Calculator</h2>
+    <input id="weight" type="number" placeholder="Weight (kg)">
+    <input id="height" type="number" placeholder="Height (cm)">
+    <button onclick="calcBMI()">Calculate</button>
+    <p id="bmiResult"></p>
+  </div>
+
+  <!-- EMI -->
+  <div class="card">
+    <h2>EMI Calculator</h2>
+    <input id="loan" type="number" placeholder="Loan Amount">
+    <input id="rate" type="number" placeholder="Interest %">
+    <input id="years" type="number" placeholder="Years">
+    <button onclick="calcEMI()">Calculate</button>
+    <p id="emiResult"></p>
+  </div>
+
+</div>
+
+<footer>
+  © 2026 Multi Calculator Hub
+</footer>
+
+<script>
+  function calcBMI() {
+    let w = document.getElementById("weight").value;
+    let h = document.getElementById("height").value / 100;
+    let bmi = (w / (h * h)).toFixed(2);
+    document.getElementById("bmiResult").innerText = "Your BMI: " + bmi;
+  }
+
+  function calcEMI() {
+    let P = document.getElementById("loan").value;
+    let r = document.getElementById("rate").value / 1200;
+    let n = document.getElementById("years").value * 12;
+    let emi = (P * r * Math.pow(1+r, n)) / (Math.pow(1+r, n)-1);
+    document.getElementById("emiResult").innerText =
+      "Monthly EMI: " + emi.toFixed(2);
+  }
+</script>
+
+</body>
+</html>

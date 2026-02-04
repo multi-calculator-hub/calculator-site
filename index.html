@@ -6,48 +6,332 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-/* === YOUR ORIGINAL STYLES (UNCHANGED) === */
 :root {
-  --bg-primary:#0f172a;--bg-secondary:rgba(30,41,59,.6);
-  --bg-card:rgba(30,41,59,.6);--text-primary:#f1f5f9;
-  --text-secondary:#94a3b8;--border-color:rgba(148,163,184,.1);
-  --input-bg:rgba(15,23,42,.5);--accent:#22c55e;
-  --accent-hover:#16a34a;--shadow:rgba(0,0,0,.3);
-  --result-bg:rgba(34,197,94,.1);--result-border:rgba(34,197,94,.2);
-  --result-text:#4ade80;--error-bg:rgba(239,68,68,.1);
-  --error-border:rgba(239,68,68,.2);--error-text:#f87171;
-  --header-bg:rgba(15,23,42,.95)
+  --bg-primary: #0f172a;
+  --bg-secondary: rgba(30, 41, 59, 0.6);
+  --bg-card: rgba(30, 41, 59, 0.6);
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --border-color: rgba(148, 163, 184, 0.1);
+  --input-bg: rgba(15, 23, 42, 0.5);
+  --accent: #22c55e;
+  --accent-hover: #16a34a;
+  --shadow: rgba(0, 0, 0, 0.3);
+  --result-bg: rgba(34, 197, 94, 0.1);
+  --result-border: rgba(34, 197, 94, 0.2);
+  --result-text: #4ade80;
+  --error-bg: rgba(239, 68, 68, 0.1);
+  --error-border: rgba(239, 68, 68, 0.2);
+  --error-text: #f87171;
+  --header-bg: rgba(15, 23, 42, 0.95);
 }
-[data-theme="light"]{
-  --bg-primary:#f8fafc;--bg-secondary:#fff;--bg-card:#fff;
-  --text-primary:#0f172a;--text-secondary:#64748b;
-  --border-color:rgba(148,163,184,.2);--input-bg:#f1f5f9;
-  --accent:#16a34a;--accent-hover:#15803d;
-  --shadow:rgba(0,0,0,.1)
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:system-ui;background:var(--bg-primary);color:var(--text-primary)}
-header{position:sticky;top:0;background:var(--header-bg);padding:20px;border-bottom:1px solid var(--border-color)}
-.header-content{max-width:900px;margin:auto;display:flex;justify-content:space-between}
-.logo{font-size:22px;font-weight:700}
-.theme-toggle{background:var(--accent);border:none;color:#fff;padding:10px 16px;border-radius:50px;cursor:pointer}
-.container{max-width:900px;margin:auto;padding:40px 20px}
 
-.tabs-nav{display:flex;gap:8px;background:var(--bg-secondary);padding:8px;border-radius:14px}
-.tab-btn{flex:1;padding:14px;border:none;background:none;color:var(--text-secondary);font-weight:600;cursor:pointer;border-radius:12px}
-.tab-btn.active{background:var(--accent);color:#fff}
-.tab-content{display:none}
-.tab-content.active{display:block}
-.card{background:var(--bg-card);border:1px solid var(--border-color);border-radius:20px;padding:32px;margin-top:20px}
-.calculator-header{text-align:center;margin-bottom:20px}
-.input-group{margin-bottom:16px}
-label{font-size:12px;color:var(--text-secondary)}
-input{width:100%;padding:14px;border-radius:10px;border:1px solid var(--border-color);background:var(--input-bg);color:var(--text-primary)}
-.calculate-btn{width:100%;padding:14px;border:none;border-radius:12px;background:var(--accent);color:#fff;font-weight:700;cursor:pointer}
-.result{margin-top:20px;padding:20px;border-radius:14px;background:var(--result-bg);border:1px solid var(--result-border);text-align:center;opacity:0}
-.result.show{opacity:1}
-.result.error{background:var(--error-bg);border-color:var(--error-border);color:var(--error-text)}
-footer{text-align:center;margin:40px;color:var(--text-secondary)}
+[data-theme="light"] {
+  --bg-primary: #f8fafc;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --border-color: rgba(148, 163, 184, 0.2);
+  --input-bg: #f1f5f9;
+  --accent: #16a34a;
+  --accent-hover: #15803d;
+  --shadow: rgba(0, 0, 0, 0.1);
+  --result-bg: rgba(34, 197, 94, 0.1);
+  --result-border: rgba(34, 197, 94, 0.3);
+  --result-text: #15803d;
+  --error-bg: rgba(239, 68, 68, 0.05);
+  --error-border: rgba(239, 68, 68, 0.3);
+  --error-text: #dc2626;
+  --header-bg: rgba(255, 255, 255, 0.9);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+header {
+  position: sticky;
+  top: 0;
+  background: var(--header-bg);
+  backdrop-filter: blur(10px);
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 4px 20px var(--shadow);
+  z-index: 100;
+}
+
+.header-content {
+  max-width: 1000px;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.theme-toggle {
+  background: var(--accent);
+  border: none;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 50px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+  transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
+}
+
+.container {
+  max-width: 1000px;
+  margin: auto;
+  padding: 40px 20px;
+}
+
+.tabs-nav {
+  display: flex;
+  gap: 8px;
+  background: var(--bg-secondary);
+  padding: 8px;
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tabs-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.tab-btn {
+  flex: 1;
+  min-width: 80px;
+  padding: 14px 16px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 12px;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+
+.tab-btn:hover {
+  color: var(--text-primary);
+  background: rgba(148, 163, 184, 0.1);
+}
+
+.tab-btn.active {
+  background: var(--accent);
+  color: white;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+.tab-content {
+  display: none;
+  animation: fadeIn 0.4s ease;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 32px;
+  margin-top: 24px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 40px var(--shadow);
+}
+
+.calculator-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.calculator-header h2 {
+  font-size: 26px;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.calculator-header p {
+  color: var(--text-secondary);
+  font-size: 15px;
+}
+
+.input-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+input, select {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 2px solid var(--border-color);
+  background: var(--input-bg);
+  color: var(--text-primary);
+  font-size: 16px;
+  transition: all 0.2s ease;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+}
+
+input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.6;
+}
+
+.calculate-btn {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+  color: white;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.calculate-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(34, 197, 94, 0.4);
+}
+
+.result {
+  margin-top: 24px;
+  padding: 24px;
+  border-radius: 14px;
+  background: var(--result-bg);
+  border: 2px solid var(--result-border);
+  color: var(--result-text);
+  text-align: center;
+  font-weight: 600;
+  font-size: 18px;
+  min-height: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.4s ease;
+}
+
+.result.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.result.error {
+  background: var(--error-bg);
+  border-color: var(--error-border);
+  color: var(--error-text);
+}
+
+.result-main {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.result-sub {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.dual-btn {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+footer {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-secondary);
+  border-top: 1px solid var(--border-color);
+  margin-top: 60px;
+}
+
+@media (max-width: 640px) {
+  .header-content {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .tabs-nav {
+    padding: 6px;
+  }
+  
+  .tab-btn {
+    padding: 12px;
+    font-size: 13px;
+  }
+  
+  .card {
+    padding: 24px;
+  }
+  
+  .dual-btn {
+    grid-template-columns: 1fr;
+  }
+}
 </style>
 </head>
 
@@ -56,7 +340,10 @@ footer{text-align:center;margin:40px;color:var(--text-secondary)}
 <header>
   <div class="header-content">
     <div class="logo">🧮 Multi Calculator Hub</div>
-    <button class="theme-toggle" onclick="toggleTheme()">🌗 Theme</button>
+    <button class="theme-toggle" onclick="toggleTheme()">
+      <span id="themeIcon">🌙</span>
+      <span id="themeText">Dark</span>
+    </button>
   </div>
 </header>
 
@@ -67,120 +354,363 @@ footer{text-align:center;margin:40px;color:var(--text-secondary)}
   <button class="tab-btn active" onclick="switchTab('bmi')" id="tab-bmi">BMI</button>
   <button class="tab-btn" onclick="switchTab('emi')" id="tab-emi">EMI</button>
   <button class="tab-btn" onclick="switchTab('age')" id="tab-age">Age</button>
-  <button class="tab-btn" onclick="switchTab('percent')" id="tab-percent">%</button>
+  <button class="tab-btn" onclick="switchTab('percent')" id="tab-percent">Percent</button>
   <button class="tab-btn" onclick="switchTab('si')" id="tab-si">Interest</button>
+  <button class="tab-btn" onclick="switchTab('ci')" id="tab-ci">Compound</button>
+  <button class="tab-btn" onclick="switchTab('discount')" id="tab-discount">Discount</button>
+  <button class="tab-btn" onclick="switchTab('savings')" id="tab-savings">Savings</button>
+  <button class="tab-btn" onclick="switchTab('average')" id="tab-average">Average</button>
+  <button class="tab-btn" onclick="switchTab('binary')" id="tab-binary">Binary</button>
 </div>
 
 <!-- BMI -->
 <div id="bmi" class="tab-content active">
-<div class="card">
-<h3>BMI Calculator</h3>
-<input id="weight" type="number" placeholder="Weight (kg)">
-<input id="height" type="number" placeholder="Height (cm)">
-<button class="calculate-btn" onclick="calcBMI()">Calculate</button>
-<div id="bmiResult" class="result"></div>
-</div>
+  <div class="card">
+    <div class="calculator-header">
+      <h2>⚖️ BMI Calculator</h2>
+      <p>Calculate your Body Mass Index</p>
+    </div>
+    <div class="input-group">
+      <label>Weight (kg)</label>
+      <input id="weight" type="number" placeholder="e.g., 70" step="0.1">
+    </div>
+    <div class="input-group">
+      <label>Height (cm)</label>
+      <input id="height" type="number" placeholder="e.g., 175" step="0.1">
+    </div>
+    <button class="calculate-btn" onclick="calcBMI()">Calculate BMI</button>
+    <div id="bmiResult" class="result">Enter your details</div>
+  </div>
 </div>
 
 <!-- EMI -->
 <div id="emi" class="tab-content">
-<div class="card">
-<h3>EMI Calculator</h3>
-<input id="loan" type="number" placeholder="Loan Amount">
-<input id="rate" type="number" placeholder="Interest Rate %">
-<input id="years" type="number" placeholder="Years">
-<button class="calculate-btn" onclick="calcEMI()">Calculate</button>
-<div id="emiResult" class="result"></div>
-</div>
+  <div class="card">
+    <div class="calculator-header">
+      <h2>💰 EMI Calculator</h2>
+      <p>Calculate loan monthly installments</p>
+    </div>
+    <div class="input-group">
+      <label>Loan Amount ($)</label>
+      <input id="loan" type="number" placeholder="e.g., 50000">
+    </div>
+    <div class="input-group">
+      <label>Annual Interest Rate (%)</label>
+      <input id="rate" type="number" placeholder="e.g., 7.5" step="0.1">
+    </div>
+    <div class="input-group">
+      <label>Duration (Years)</label>
+      <input id="years" type="number" placeholder="e.g., 5" step="0.5">
+    </div>
+    <button class="calculate-btn" onclick="calcEMI()">Calculate EMI</button>
+    <div id="emiResult" class="result">Enter loan details</div>
+  </div>
 </div>
 
 <!-- AGE -->
 <div id="age" class="tab-content">
-<div class="card">
-<h3>Age Calculator</h3>
-<input type="date" id="dob">
-<button class="calculate-btn" onclick="calcAge()">Calculate</button>
-<div id="ageResult" class="result"></div>
-</div>
+  <div class="card">
+    <div class="calculator-header">
+      <h2>🎂 Age Calculator</h2>
+      <p>Calculate your exact age</p>
+    </div>
+    <div class="input-group">
+      <label>Date of Birth</label>
+      <input type="date" id="dob">
+    </div>
+    <button class="calculate-btn" onclick="calcAge()">Calculate Age</button>
+    <div id="ageResult" class="result">Select your birth date</div>
+  </div>
 </div>
 
 <!-- PERCENT -->
 <div id="percent" class="tab-content">
-<div class="card">
-<h3>Percentage Calculator</h3>
-<input id="part" type="number" placeholder="Value">
-<input id="total" type="number" placeholder="Total">
-<button class="calculate-btn" onclick="calcPercentage()">Calculate</button>
-<div id="percentResult" class="result"></div>
-</div>
+  <div class="card">
+    <div class="calculator-header">
+      <h2>📊 Percentage Calculator</h2>
+      <p>Calculate percentage value</p>
+    </div>
+    <div class="input-group">
+      <label>Value</label>
+      <input id="part" type="number" placeholder="Part value">
+    </div>
+    <div class="input-group">
+      <label>Total</label>
+      <input id="total" type="number" placeholder="Total value">
+    </div>
+    <button class="calculate-btn" onclick="calcPercentage()">Calculate %</button>
+    <div id="percentResult" class="result">Enter values</div>
+  </div>
 </div>
 
 <!-- SIMPLE INTEREST -->
 <div id="si" class="tab-content">
-<div class="card">
-<h3>Simple Interest</h3>
-<input id="sip" type="number" placeholder="Principal">
-<input id="sir" type="number" placeholder="Rate %">
-<input id="sit" type="number" placeholder="Years">
-<button class="calculate-btn" onclick="calcSI()">Calculate</button>
-<div id="siResult" class="result"></div>
+  <div class="card">
+    <div class="calculator-header">
+      <h2>📈 Simple Interest</h2>
+      <p>Calculate simple interest</p>
+    </div>
+    <div class="input-group">
+      <label>Principal ($)</label>
+      <input id="sip" type="number" placeholder="Principal amount">
+    </div>
+    <div class="input-group">
+      <label>Rate (%)</label>
+      <input id="sir" type="number" placeholder="Annual rate" step="0.1">
+    </div>
+    <div class="input-group">
+      <label>Time (Years)</label>
+      <input id="sit" type="number" placeholder="Duration" step="0.5">
+    </div>
+    <button class="calculate-btn" onclick="calcSI()">Calculate Interest</button>
+    <div id="siResult" class="result">Enter details</div>
+  </div>
 </div>
+
+<!-- COMPOUND INTEREST -->
+<div id="ci" class="tab-content">
+  <div class="card">
+    <div class="calculator-header">
+      <h2>💹 Compound Interest</h2>
+      <p>Calculate compound growth</p>
+    </div>
+    <div class="input-group">
+      <label>Principal ($)</label>
+      <input id="ciPrincipal" type="number" placeholder="Initial amount">
+    </div>
+    <div class="input-group">
+      <label>Annual Rate (%)</label>
+      <input id="ciRate" type="number" placeholder="Interest rate" step="0.1">
+    </div>
+    <div class="input-group">
+      <label>Time (Years)</label>
+      <input id="ciTime" type="number" placeholder="Duration" step="0.5">
+    </div>
+    <div class="input-group">
+      <label>Compounds/Year</label>
+      <input id="ciCompounds" type="number" placeholder="e.g., 12 for monthly" value="12">
+    </div>
+    <button class="calculate-btn" onclick="calcCI()">Calculate</button>
+    <div id="ciResult" class="result">Enter investment details</div>
+  </div>
+</div>
+
+<!-- DISCOUNT -->
+<div id="discount" class="tab-content">
+  <div class="card">
+    <div class="calculator-header">
+      <h2>🏷️ Discount Calculator</h2>
+      <p>Calculate sale price</p>
+    </div>
+    <div class="input-group">
+      <label>Original Price ($)</label>
+      <input id="price" type="number" placeholder="Original price">
+    </div>
+    <div class="input-group">
+      <label>Discount (%)</label>
+      <input id="discount" type="number" placeholder="Discount percentage" step="0.1">
+    </div>
+    <button class="calculate-btn" onclick="calcDiscount()">Calculate Price</button>
+    <div id="discountResult" class="result">Enter price details</div>
+  </div>
+</div>
+
+<!-- SAVINGS -->
+<div id="savings" class="tab-content">
+  <div class="card">
+    <div class="calculator-header">
+      <h2>🎯 Savings Goal</h2>
+      <p>Time to reach your goal</p>
+    </div>
+    <div class="input-group">
+      <label>Goal Amount ($)</label>
+      <input id="goalAmount" type="number" placeholder="Target amount">
+    </div>
+    <div class="input-group">
+      <label>Monthly Saving ($)</label>
+      <input id="monthlySaving" type="number" placeholder="Monthly contribution">
+    </div>
+    <button class="calculate-btn" onclick="calcSavings()">Calculate Time</button>
+    <div id="savingsResult" class="result">Enter savings plan</div>
+  </div>
+</div>
+
+<!-- AVERAGE -->
+<div id="average" class="tab-content">
+  <div class="card">
+    <div class="calculator-header">
+      <h2>📉 Average Calculator</h2>
+      <p>Find mean of numbers</p>
+    </div>
+    <div class="input-group">
+      <label>Numbers (comma separated)</label>
+      <input id="numbers" type="text" placeholder="e.g., 10, 20, 30, 40">
+    </div>
+    <button class="calculate-btn" onclick="calcAverage()">Calculate Average</button>
+    <div id="averageResult" class="result">Enter numbers</div>
+  </div>
+</div>
+
+<!-- BINARY -->
+<div id="binary" class="tab-content">
+  <div class="card">
+    <div class="calculator-header">
+      <h2>🔢 Binary Converter</h2>
+      <p>Convert between binary and decimal</p>
+    </div>
+    <div class="input-group">
+      <label>Binary Number</label>
+      <input id="binaryInput" type="text" placeholder="e.g., 1010">
+    </div>
+    <div class="input-group">
+      <label>Decimal Number</label>
+      <input id="decimalInput" type="number" placeholder="e.g., 10">
+    </div>
+    <div class="dual-btn">
+      <button class="calculate-btn" onclick="binaryToDecimal()">Binary → Dec</button>
+      <button class="calculate-btn" onclick="decimalToBinary()">Dec → Binary</button>
+    </div>
+    <div id="binaryResult" class="result">Enter a number to convert</div>
+  </div>
 </div>
 
 </div>
 
-<footer>© 2026 Multi Calculator Hub</footer>
+<footer>© 2026 Multi Calculator Hub • 10 Tools in One</footer>
 
 <script>
-function toggleTheme(){
-const t=document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark";
-document.documentElement.setAttribute("data-theme",t)
+// Theme Management
+function toggleTheme() {
+  const current = document.documentElement.getAttribute("data-theme");
+  const next = current === "dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", next);
+  localStorage.setItem("theme", next);
+  updateThemeUI(next);
 }
 
-function switchTab(tab){
-document.querySelectorAll(".tab-content").forEach(t=>t.classList.remove("active"))
-document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"))
-document.getElementById(tab).classList.add("active")
-document.getElementById("tab-"+tab).classList.add("active")
+function updateThemeUI(theme) {
+  document.getElementById("themeIcon").textContent = theme === "dark" ? "🌙" : "☀️";
+  document.getElementById("themeText").textContent = theme === "dark" ? "Dark" : "Light";
 }
 
-const showResult=(id,txt,err=false)=>{
-const el=document.getElementById(id)
-el.textContent=txt
-el.classList.add("show")
-el.classList.toggle("error",err)
+// Initialize theme
+const savedTheme = localStorage.getItem("theme") || "dark";
+document.documentElement.setAttribute("data-theme", savedTheme);
+updateThemeUI(savedTheme);
+
+// Tab Management
+function switchTab(tab) {
+  document.querySelectorAll(".tab-content").forEach(t => t.classList.remove("active"));
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+  document.getElementById(tab).classList.add("active");
+  document.getElementById("tab-" + tab).classList.add("active");
 }
 
-function calcBMI(){
-const w=+weight.value,h=+height.value/100
-if(!w||!h)return showResult("bmiResult","Invalid input",true)
-showResult("bmiResult",(w/(h*h)).toFixed(1))
+// Utility
+const formatCurrency = (num) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(num);
+
+const showResult = (id, main, sub = "", error = false) => {
+  const el = document.getElementById(id);
+  el.innerHTML = `<div class="result-main">${main}</div>${sub ? `<div class="result-sub">${sub}</div>` : ""}`;
+  el.classList.add("show");
+  el.classList.toggle("error", error);
+};
+
+const showError = (id, msg) => showResult(id, "⚠️ Error", msg, true);
+
+// Calculators
+function calcBMI() {
+  const w = parseFloat(document.getElementById("weight").value);
+  const h = parseFloat(document.getElementById("height").value) / 100;
+  if (!w || !h) return showError("bmiResult", "Enter valid weight and height");
+  const bmi = (w / (h * h)).toFixed(1);
+  let cat = bmi < 18.5 ? "Underweight ⚡" : bmi < 25 ? "Normal ✅" : bmi < 30 ? "Overweight ⚠️" : "Obese 🔴";
+  showResult("bmiResult", `BMI: ${bmi}`, `Category: ${cat}`);
 }
 
-function calcEMI(){
-const p=+loan.value,r=+rate.value/1200,n=+years.value*12
-if(!p||!r||!n)return showResult("emiResult","Invalid input",true)
-const emi=(p*r*Math.pow(1+r,n))/(Math.pow(1+r,n)-1)
-showResult("emiResult",emi.toFixed(2))
+function calcEMI() {
+  const p = parseFloat(document.getElementById("loan").value);
+  const r = parseFloat(document.getElementById("rate").value) / 1200;
+  const n = parseFloat(document.getElementById("years").value) * 12;
+  if (!p || !r || !n) return showError("emiResult", "Enter all loan details");
+  const emi = (p * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+  const total = emi * n;
+  showResult("emiResult", formatCurrency(emi) + "/mo", `Total: ${formatCurrency(total)}`);
 }
 
-function calcAge(){
-const d=new Date(dob.value)
-if(!d.getTime())return showResult("ageResult","Invalid date",true)
-const a=new Date().getFullYear()-d.getFullYear()
-showResult("ageResult",a+" years")
+function calcAge() {
+  const d = new Date(document.getElementById("dob").value);
+  if (!d.getTime()) return showError("ageResult", "Select a valid date");
+  const diff = Date.now() - d.getTime();
+  const age = new Date(diff).getUTCFullYear() - 1970;
+  const months = new Date(diff).getUTCMonth();
+  showResult("ageResult", `${age} Years`, `${months} Months old`);
 }
 
-function calcPercentage(){
-const p=+part.value,t=+total.value
-if(!p||!t)return showResult("percentResult","Invalid input",true)
-showResult("percentResult",((p/t)*100).toFixed(2)+"%")
+function calcPercentage() {
+  const p = parseFloat(document.getElementById("part").value);
+  const t = parseFloat(document.getElementById("total").value);
+  if (!p || !t) return showError("percentResult", "Enter both values");
+  showResult("percentResult", `${((p / t) * 100).toFixed(2)}%`, `${p} of ${t}`);
 }
 
-function calcSI(){
-const p=+sip.value,r=+sir.value,t=+sit.value
-if(!p||!r||!t)return showResult("siResult","Invalid input",true)
-showResult("siResult",((p*r*t)/100).toFixed(2))
+function calcSI() {
+  const p = parseFloat(document.getElementById("sip").value);
+  const r = parseFloat(document.getElementById("sir").value);
+  const t = parseFloat(document.getElementById("sit").value);
+  if (!p || !r || !t) return showError("siResult", "Enter all values");
+  const interest = (p * r * t) / 100;
+  showResult("siResult", formatCurrency(interest), `Total: ${formatCurrency(p + interest)}`);
+}
+
+function calcCI() {
+  const p = parseFloat(document.getElementById("ciPrincipal").value);
+  const r = parseFloat(document.getElementById("ciRate").value) / 100;
+  const t = parseFloat(document.getElementById("ciTime").value);
+  const n = parseFloat(document.getElementById("ciCompounds").value) || 12;
+  if (!p || !r || !t) return showError("ciResult", "Enter all values");
+  const amount = p * Math.pow((1 + r / n), n * t);
+  showResult("ciResult", formatCurrency(amount), `Interest: ${formatCurrency(amount - p)}`);
+}
+
+function calcDiscount() {
+  const price = parseFloat(document.getElementById("price").value);
+  const disc = parseFloat(document.getElementById("discount").value);
+  if (!price || !disc) return showError("discountResult", "Enter price and discount");
+  const final = price * (1 - disc / 100);
+  showResult("discountResult", formatCurrency(final), `You save: ${formatCurrency(price - final)}`);
+}
+
+function calcSavings() {
+  const goal = parseFloat(document.getElementById("goalAmount").value);
+  const monthly = parseFloat(document.getElementById("monthlySaving").value);
+  if (!goal || !monthly || monthly <= 0) return showError("savingsResult", "Enter valid amounts");
+  const months = Math.ceil(goal / monthly);
+  const years = (months / 12).toFixed(1);
+  showResult("savingsResult", `${months} Months`, `That's about ${years} years`);
+}
+
+function calcAverage() {
+  const nums = document.getElementById("numbers").value.split(',').map(n => parseFloat(n.trim())).filter(n => !isNaN(n));
+  if (nums.length === 0) return showError("averageResult", "Enter valid numbers separated by commas");
+  const avg = nums.reduce((a, b) => a + b, 0) / nums.length;
+  showResult("averageResult", avg.toFixed(2), `Count: ${nums.length} numbers`);
+}
+
+function binaryToDecimal() {
+  const bin = document.getElementById("binaryInput").value.trim();
+  if (!/^[01]+$/.test(bin)) return showError("binaryResult", "Enter valid binary (0s and 1s)");
+  const dec = parseInt(bin, 2);
+  document.getElementById("decimalInput").value = dec;
+  showResult("binaryResult", `Decimal: ${dec}`, `Binary: ${bin}`);
+}
+
+function decimalToBinary() {
+  const dec = parseInt(document.getElementById("decimalInput").value);
+  if (isNaN(dec)) return showError("binaryResult", "Enter valid decimal number");
+  const bin = dec.toString(2);
+  document.getElementById("binaryInput").value = bin;
+  showResult("binaryResult", `Binary: ${bin}`, `Decimal: ${dec}`);
 }
 </script>
 

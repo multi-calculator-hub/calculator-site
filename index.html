@@ -88,7 +88,6 @@ header {
   gap: 10px;
 }
 
-/* Fixed: Clean square theme toggle, no glow */
 .theme-toggle {
   background: transparent;
   border: 1px solid var(--border-color);
@@ -131,7 +130,6 @@ header {
   display: none;
 }
 
-/* Fixed: Better tab sizing to prevent text cutoff */
 .tab-btn {
   flex: 1;
   min-width: 70px;
@@ -181,7 +179,6 @@ header {
   box-shadow: 0 4px 20px var(--shadow);
 }
 
-/* Fixed: Proper centering for headers */
 .calculator-header {
   text-align: center;
   margin-bottom: 28px;
@@ -255,7 +252,6 @@ input::placeholder {
   transform: translateY(-1px);
 }
 
-/* Fixed: Text wrapping for long binary numbers */
 .result {
   margin-top: 24px;
   padding: 24px;
@@ -515,7 +511,7 @@ footer {
   </div>
 </div>
 
-<!-- DISCOUNT -->
+<!-- DISCOUNT - Fixed IDs -->
 <div id="discount" class="tab-content">
   <div class="card">
     <div class="calculator-header">
@@ -524,11 +520,11 @@ footer {
     </div>
     <div class="input-group">
       <label>Original Price ($)</label>
-      <input id="price" type="number" placeholder="Original price">
+      <input id="origPrice" type="number" placeholder="Original price">
     </div>
     <div class="input-group">
       <label>Discount (%)</label>
-      <input id="discount" type="number" placeholder="Discount percentage" step="0.1">
+      <input id="discPercent" type="number" placeholder="Discount percentage" step="0.1">
     </div>
     <button class="calculate-btn" onclick="calcDiscount()">Calculate Price</button>
     <div id="discountResult" class="result">Enter price details</div>
@@ -693,9 +689,10 @@ function calcCI() {
   showResult("ciResult", formatCurrency(amount), `Interest: ${formatCurrency(amount - p)}`);
 }
 
+// Fixed: Discount calculator with correct IDs
 function calcDiscount() {
-  const price = parseFloat(document.getElementById("price").value);
-  const disc = parseFloat(document.getElementById("discount").value);
+  const price = parseFloat(document.getElementById("origPrice").value);
+  const disc = parseFloat(document.getElementById("discPercent").value);
   if (!price || !disc) return showError("discountResult", "Enter price and discount");
   const final = price * (1 - disc / 100);
   showResult("discountResult", formatCurrency(final), `You save: ${formatCurrency(price - final)}`);

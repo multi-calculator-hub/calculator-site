@@ -1,452 +1,735 @@
-<!-- mortgage-calculator.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mortgage Calculator - Free House Payment Calculator | CalcHub</title>
-    <meta name="description" content="Free mortgage calculator with amortization schedule. Calculate monthly payments, total interest, PMI, taxes, and insurance. Compare 15 vs 30 year mortgages.">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        .input-group { margin-bottom: 1.5rem; }
-        .result-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-        .amortization-row:nth-child(even) { background-color: #f9fafb; }
-    </style>
+<meta charset="UTF-8">
+<title>Multi Calculator Hub</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root {
+  --bg-primary: #0f172a;
+  --bg-secondary: rgba(30, 41, 59, 0.6);
+  --bg-card: rgba(30, 41, 59, 0.6);
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --border-color: rgba(148, 163, 184, 0.1);
+  --input-bg: rgba(15, 23, 42, 0.5);
+  --accent: #22c55e;
+  --accent-hover: #16a34a;
+  --shadow: rgba(0, 0, 0, 0.3);
+  --result-bg: rgba(34, 197, 94, 0.1);
+  --result-border: rgba(34, 197, 94, 0.2);
+  --result-text: #4ade80;
+  --error-bg: rgba(239, 68, 68, 0.1);
+  --error-border: rgba(239, 68, 68, 0.2);
+  --error-text: #f87171;
+  --header-bg: rgba(15, 23, 42, 0.95);
+}
+
+[data-theme="light"] {
+  --bg-primary: #f8fafc;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --border-color: rgba(148, 163, 184, 0.2);
+  --input-bg: #f1f5f9;
+  --accent: #16a34a;
+  --accent-hover: #15803d;
+  --shadow: rgba(0, 0, 0, 0.1);
+  --result-bg: rgba(34, 197, 94, 0.1);
+  --result-border: rgba(34, 197, 94, 0.3);
+  --result-text: #15803d;
+  --error-bg: rgba(239, 68, 68, 0.05);
+  --error-border: rgba(239, 68, 68, 0.3);
+  --error-text: #dc2626;
+  --header-bg: rgba(255, 255, 255, 0.9);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+header {
+  position: sticky;
+  top: 0;
+  background: var(--header-bg);
+  backdrop-filter: blur(10px);
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 2px 10px var(--shadow);
+  z-index: 100;
+}
+
+.header-content {
+  max-width: 1000px;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.theme-toggle {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.theme-toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(34, 197, 94, 0.05);
+}
+
+.container {
+  max-width: 1000px;
+  margin: auto;
+  padding: 40px 20px;
+}
+
+.tabs-nav {
+  display: flex;
+  gap: 8px;
+  background: var(--bg-secondary);
+  padding: 8px;
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tabs-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.tab-btn {
+  flex: 1;
+  min-width: 70px;
+  padding: 12px 14px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: 10px;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+
+.tab-btn:hover {
+  color: var(--text-primary);
+  background: rgba(148, 163, 184, 0.1);
+}
+
+.tab-btn.active {
+  background: var(--accent);
+  color: white;
+}
+
+.tab-content {
+  display: none;
+  animation: fadeIn 0.4s ease;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 32px;
+  margin-top: 24px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px var(--shadow);
+}
+
+.calculator-header {
+  text-align: center;
+  margin-bottom: 28px;
+  width: 100%;
+}
+
+.calculator-header h2 {
+  font-size: 24px;
+  color: var(--accent);
+  margin-bottom: 8px;
+  display: block;
+  width: 100%;
+}
+
+.calculator-header p {
+  color: var(--text-secondary);
+  font-size: 15px;
+}
+
+.input-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+input, select {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 2px solid var(--border-color);
+  background: var(--input-bg);
+  color: var(--text-primary);
+  font-size: 16px;
+  transition: all 0.2s ease;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+}
+
+input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.6;
+}
+
+.calculate-btn {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 12px;
+  background: var(--accent);
+  color: white;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.calculate-btn:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+.result {
+  margin-top: 24px;
+  padding: 24px;
+  border-radius: 14px;
+  background: var(--result-bg);
+  border: 2px solid var(--result-border);
+  color: var(--result-text);
+  text-align: center;
+  font-weight: 600;
+  min-height: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.4s ease;
+  word-break: break-all;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+  font-size: 16px;
+}
+
+.result.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.result.error {
+  background: var(--error-bg);
+  border-color: var(--error-border);
+  color: var(--error-text);
+}
+
+.result-main {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.4;
+  word-break: break-all;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+  hyphens: auto;
+}
+
+.result-sub {
+  font-size: 13px;
+  opacity: 0.9;
+  word-break: break-all;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+  color: var(--text-secondary);
+}
+
+.dual-btn {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+footer {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-secondary);
+  border-top: 1px solid var(--border-color);
+  margin-top: 60px;
+}
+
+@media (max-width: 640px) {
+  .header-content {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .tabs-nav {
+    padding: 6px;
+  }
+  
+  .tab-btn {
+    padding: 10px 12px;
+    font-size: 12px;
+    min-width: 60px;
+  }
+  
+  .card {
+    padding: 24px;
+  }
+  
+  .dual-btn {
+    grid-template-columns: 1fr;
+  }
+  
+  .result-main {
+    font-size: 18px;
+  }
+}
+</style>
 </head>
-<body class="bg-gray-50">
 
-    <!-- Same Header as index -->
-    <header class="bg-white shadow-sm sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <a href="index.html" class="flex items-center space-x-2">
-                    <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">C</div>
-                    <span class="font-bold text-xl text-gray-900">CalcHub</span>
-                </a>
-                <nav class="hidden md:flex space-x-8">
-                    <a href="finance.html" class="text-blue-600 font-medium">Finance</a>
-                    <a href="math.html" class="text-gray-600 hover:text-blue-600 font-medium">Math</a>
-                    <a href="health.html" class="text-gray-600 hover:text-blue-600 font-medium">Health</a>
-                </nav>
-            </div>
-        </div>
-    </header>
+<body>
 
-    <!-- Breadcrumb -->
-    <div class="max-w-7xl mx-auto px-4 py-4">
-        <div class="text-sm text-gray-500">
-            <a href="index.html" class="hover:text-blue-600">Home</a> → 
-            <a href="finance.html" class="hover:text-blue-600">Finance</a> → 
-            <span class="text-gray-900">Mortgage Calculator</span>
-        </div>
+<header>
+  <div class="header-content">
+    <div class="logo">🧮 Multi Calculator Hub</div>
+    <button class="theme-toggle" onclick="toggleTheme()">
+      <span id="themeIcon">🌙</span>
+      <span id="themeText">Dark</span>
+    </button>
+  </div>
+</header>
+
+<div class="container">
+
+<!-- TABS -->
+<div class="tabs-nav">
+  <button class="tab-btn active" onclick="switchTab('bmi')" id="tab-bmi">BMI</button>
+  <button class="tab-btn" onclick="switchTab('emi')" id="tab-emi">EMI</button>
+  <button class="tab-btn" onclick="switchTab('age')" id="tab-age">Age</button>
+  <button class="tab-btn" onclick="switchTab('percent')" id="tab-percent">Percent</button>
+  <button class="tab-btn" onclick="switchTab('si')" id="tab-si">Interest</button>
+  <button class="tab-btn" onclick="switchTab('ci')" id="tab-ci">Compound</button>
+  <button class="tab-btn" onclick="switchTab('discount')" id="tab-discount">Discount</button>
+  <button class="tab-btn" onclick="switchTab('savings')" id="tab-savings">Savings</button>
+  <button class="tab-btn" onclick="switchTab('average')" id="tab-average">Average</button>
+  <button class="tab-btn" onclick="switchTab('binary')" id="tab-binary">Binary</button>
+</div>
+
+<!-- BMI -->
+<div id="bmi" class="tab-content active">
+  <div class="card">
+    <div class="calculator-header">
+      <h2>⚖️ BMI Calculator</h2>
+      <p>Calculate your Body Mass Index</p>
     </div>
-
-    <div class="max-w-7xl mx-auto px-4 py-8">
-        <div class="grid lg:grid-cols-3 gap-8">
-            
-            <!-- Main Calculator -->
-            <div class="lg:col-span-2">
-                <h1 class="text-4xl font-bold text-gray-900 mb-2">Mortgage Calculator</h1>
-                <p class="text-gray-600 mb-8">Calculate your monthly mortgage payment with taxes, insurance, and PMI. See amortization schedule.</p>
-
-                <!-- Top Ad -->
-                <div class="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-24 mb-6 flex items-center justify-center text-gray-400 text-sm">
-                    Google AdSense: Responsive Ad
-                </div>
-
-                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <!-- Home Price -->
-                        <div class="input-group">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Home Price</label>
-                            <div class="relative">
-                                <span class="absolute left-3 top-3 text-gray-500">$</span>
-                                <input type="number" id="homePrice" value="400000" 
-                                       class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg">
-                            </div>
-                        </div>
-
-                        <!-- Down Payment -->
-                        <div class="input-group">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Down Payment</label>
-                            <div class="flex">
-                                <div class="relative flex-1">
-                                    <span class="absolute left-3 top-3 text-gray-500">$</span>
-                                    <input type="number" id="downPayment" value="80000" 
-                                           class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-l-lg focus:ring-2 focus:ring-blue-500 text-lg">
-                                </div>
-                                <input type="number" id="downPaymentPercent" value="20" 
-                                       class="w-20 px-3 py-3 border border-l-0 border-gray-300 rounded-r-lg focus:ring-2 focus:ring-blue-500 text-lg text-center">
-                                <span class="absolute right-12 top-3 text-gray-500 pointer-events-none">%</span>
-                            </div>
-                        </div>
-
-                        <!-- Loan Term -->
-                        <div class="input-group">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Loan Term</label>
-                            <select id="loanTerm" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-lg">
-                                <option value="30">30 years</option>
-                                <option value="20">20 years</option>
-                                <option value="15">15 years</option>
-                                <option value="10">10 years</option>
-                            </select>
-                        </div>
-
-                        <!-- Interest Rate -->
-                        <div class="input-group">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Interest Rate</label>
-                            <div class="relative">
-                                <input type="number" id="interestRate" value="6.5" step="0.01"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-lg">
-                                <span class="absolute right-3 top-3 text-gray-500">%</span>
-                            </div>
-                        </div>
-
-                        <!-- Property Tax -->
-                        <div class="input-group">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Property Tax / Year</label>
-                            <div class="relative">
-                                <span class="absolute left-3 top-3 text-gray-500">$</span>
-                                <input type="number" id="propertyTax" value="2400" 
-                                       class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-lg">
-                            </div>
-                        </div>
-
-                        <!-- Home Insurance -->
-                        <div class="input-group">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Home Insurance / Year</label>
-                            <div class="relative">
-                                <span class="absolute left-3 top-3 text-gray-500">$</span>
-                                <input type="number" id="homeInsurance" value="1200" 
-                                       class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-lg">
-                            </div>
-                        </div>
-
-                        <!-- PMI -->
-                        <div class="input-group md:col-span-2">
-                            <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="checkbox" id="includePMI" class="w-4 h-4 text-blue-600 rounded">
-                                <span class="text-sm font-medium text-gray-700">Include PMI (Private Mortgage Insurance)</span>
-                                <span class="text-xs text-gray-500">(Required if down payment < 20%)</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <button onclick="calculateMortgage()" 
-                            class="w-full mt-6 bg-blue-600 text-white py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition shadow-lg">
-                        Calculate Mortgage
-                    </button>
-                </div>
-
-                <!-- Results Section -->
-                <div id="results" class="mt-8 hidden">
-                    <!-- Main Result Card -->
-                    <div class="result-card text-white rounded-2xl p-8 mb-6">
-                        <div class="text-center mb-6">
-                            <div class="text-sm opacity-90 mb-1">Estimated Monthly Payment</div>
-                            <div class="text-5xl font-bold" id="monthlyPayment">$0</div>
-                        </div>
-                        
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                            <div class="bg-white/10 rounded-lg p-3">
-                                <div class="text-xs opacity-75">Principal & Interest</div>
-                                <div class="font-semibold" id="piPayment">$0</div>
-                            </div>
-                            <div class="bg-white/10 rounded-lg p-3">
-                                <div class="text-xs opacity-75">Property Tax</div>
-                                <div class="font-semibold" id="monthlyTax">$0</div>
-                            </div>
-                            <div class="bg-white/10 rounded-lg p-3">
-                                <div class="text-xs opacity-75">Insurance</div>
-                                <div class="font-semibold" id="monthlyInsurance">$0</div>
-                            </div>
-                            <div class="bg-white/10 rounded-lg p-3" id="pmiBox" style="display: none;">
-                                <div class="text-xs opacity-75">PMI</div>
-                                <div class="font-semibold" id="monthlyPMI">$0</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Loan Details -->
-                    <div class="bg-white rounded-xl shadow-md p-6 mb-6">
-                        <h3 class="font-bold text-lg mb-4">Loan Details</h3>
-                        <div class="grid md:grid-cols-3 gap-4">
-                            <div class="border-l-4 border-blue-500 pl-4">
-                                <div class="text-sm text-gray-600">Loan Amount</div>
-                                <div class="text-xl font-bold" id="loanAmount">$0</div>
-                            </div>
-                            <div class="border-l-4 border-green-500 pl-4">
-                                <div class="text-sm text-gray-600">Total Interest</div>
-                                <div class="text-xl font-bold text-green-600" id="totalInterest">$0</div>
-                            </div>
-                            <div class="border-l-4 border-purple-500 pl-4">
-                                <div class="text-sm text-gray-600">Total Cost</div>
-                                <div class="text-xl font-bold" id="totalCost">$0</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Amortization Schedule -->
-                    <div class="bg-white rounded-xl shadow-md p-6">
-                        <h3 class="font-bold text-lg mb-4">Amortization Schedule (First 12 Months)</h3>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-4 py-3 text-left font-semibold text-gray-700">Month</th>
-                                        <th class="px-4 py-3 text-right font-semibold text-gray-700">Payment</th>
-                                        <th class="px-4 py-3 text-right font-semibold text-gray-700">Principal</th>
-                                        <th class="px-4 py-3 text-right font-semibold text-gray-700">Interest</th>
-                                        <th class="px-4 py-3 text-right font-semibold text-gray-700">Balance</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="amortizationBody">
-                                    <!-- JS will populate -->
-                                </tbody>
-                            </table>
-                        </div>
-                        <button class="mt-4 text-blue-600 font-medium hover:underline" onclick="alert('Pro feature: Full schedule export')">
-                            Download full schedule (Pro) →
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Content for SEO -->
-                <div class="mt-12 prose max-w-none">
-                    <h2 class="text-2xl font-bold mb-4">How to Use This Mortgage Calculator</h2>
-                    <p class="text-gray-600 mb-4">
-                        Our mortgage calculator helps you estimate your monthly house payment including principal, interest, property taxes, 
-                        homeowners insurance, and private mortgage insurance (PMI). Enter your home price, down payment, loan term, and 
-                        interest rate to see your complete payment breakdown.
-                    </p>
-                    
-                    <h3 class="text-xl font-bold mb-3 mt-8">Understanding Your Mortgage Payment</h3>
-                    <div class="grid md:grid-cols-2 gap-6 mb-6">
-                        <div class="bg-blue-50 p-4 rounded-lg">
-                            <h4 class="font-bold text-blue-900 mb-2">Principal & Interest</h4>
-                            <p class="text-sm text-blue-800">The core of your mortgage payment. Principal pays down your loan balance, while interest is the cost of borrowing.</p>
-                        </div>
-                        <div class="bg-green-50 p-4 rounded-lg">
-                            <h4 class="font-bold text-green-900 mb-2">Escrow (Taxes & Insurance)</h4>
-                            <p class="text-sm text-green-800">Most lenders require you to pay property taxes and insurance monthly as part of your mortgage payment.</p>
-                        </div>
-                    </div>
-
-                    <h3 class="text-xl font-bold mb-3">15-Year vs 30-Year Mortgage</h3>
-                    <p class="text-gray-600 mb-4">
-                        A 15-year mortgage typically has a lower interest rate but higher monthly payments. You'll pay significantly less 
-                        interest over the life of the loan. A 30-year mortgage offers lower monthly payments but costs more in interest 
-                        over time. Use our calculator to compare both options side by side.
-                    </p>
-                </div>
-
-                <!-- Related Calculators -->
-                <div class="mt-12">
-                    <h3 class="text-xl font-bold mb-4">Related Calculators</h3>
-                    <div class="grid md:grid-cols-3 gap-4">
-                        <a href="refinance-calculator.html" class="block p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-md transition">
-                            <div class="font-semibold text-blue-600">Refinance Calculator</div>
-                            <div class="text-sm text-gray-600">Should you refinance?</div>
-                        </a>
-                        <a href="affordability-calculator.html" class="block p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-md transition">
-                            <div class="font-semibold text-blue-600">Affordability Calculator</div>
-                            <div class="text-sm text-gray-600">How much house can you afford?</div>
-                        </a>
-                        <a href="compound-interest.html" class="block p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-md transition">
-                            <div class="font-semibold text-blue-600">Compound Interest</div>
-                            <div class="text-sm text-gray-600">See investment growth</div>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Sidebar -->
-            <div class="space-y-6">
-                <!-- Sticky Ad -->
-                <div class="sticky top-24">
-                    <div class="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-64 mb-6 flex items-center justify-center text-gray-400 text-sm">
-                        Google AdSense: 300x600 or 300x250
-                    </div>
-
-                    <!-- Pro CTA -->
-                    <div class="bg-gradient-to-br from-blue-600 to-indigo-700 text-white rounded-xl p-6 mb-6">
-                        <h3 class="font-bold text-lg mb-2">Go Pro</h3>
-                        <ul class="text-sm space-y-2 mb-4 opacity-90">
-                            <li>✓ Full amortization tables</li>
-                            <li>✓ Save calculations</li>
-                            <li>✓ PDF reports</li>
-                            <li>✓ No ads</li>
-                        </ul>
-                        <button class="w-full bg-white text-blue-600 py-2 rounded-lg font-semibold hover:bg-gray-100 transition">
-                            Upgrade $9/mo
-                        </button>
-                    </div>
-
-                    <!-- Recent Calculations -->
-                    <div class="bg-white rounded-xl shadow-md p-6">
-                        <h3 class="font-bold mb-4">Trending Now</h3>
-                        <ul class="space-y-3 text-sm">
-                            <li class="flex justify-between">
-                                <span class="text-gray-600">30-year fixed</span>
-                                <span class="font-semibold">6.85%</span>
-                            </li>
-                            <li class="flex justify-between">
-                                <span class="text-gray-600">15-year fixed</span>
-                                <span class="font-semibold">6.12%</span>
-                            </li>
-                            <li class="flex justify-between">
-                                <span class="text-gray-600">Median home price</span>
-                                <span class="font-semibold">$412,000</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="input-group">
+      <label>Weight (kg)</label>
+      <input id="weight" type="number" placeholder="e.g., 70" step="0.1">
     </div>
+    <div class="input-group">
+      <label>Height (cm)</label>
+      <input id="height" type="number" placeholder="e.g., 175" step="0.1">
+    </div>
+    <button class="calculate-btn" onclick="calcBMI()">Calculate BMI</button>
+    <div id="bmiResult" class="result">Enter your details</div>
+  </div>
+</div>
 
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-gray-300 py-12 mt-12">
-        <div class="max-w-7xl mx-auto px-4 text-center">
-            <p class="text-sm">© 2024 CalcHub. The most trusted calculator resource online.</p>
-        </div>
-    </footer>
+<!-- EMI -->
+<div id="emi" class="tab-content">
+  <div class="card">
+    <div class="calculator-header">
+      <h2>💰 EMI Calculator</h2>
+      <p>Calculate loan monthly installments</p>
+    </div>
+    <div class="input-group">
+      <label>Loan Amount ($)</label>
+      <input id="loan" type="number" placeholder="e.g., 50000">
+    </div>
+    <div class="input-group">
+      <label>Annual Interest Rate (%)</label>
+      <input id="rate" type="number" placeholder="e.g., 7.5" step="0.1">
+    </div>
+    <div class="input-group">
+      <label>Duration (Years)</label>
+      <input id="years" type="number" placeholder="e.g., 5" step="0.5">
+    </div>
+    <button class="calculate-btn" onclick="calcEMI()">Calculate EMI</button>
+    <div id="emiResult" class="result">Enter loan details</div>
+  </div>
+</div>
 
-    <script>
-        // Auto-calculate on load
-        window.onload = function() {
-            calculateMortgage();
-            
-            // Sync down payment amount and percent
-            document.getElementById('homePrice').addEventListener('input', syncDownPayment);
-            document.getElementById('downPayment').addEventListener('input', function() {
-                const homePrice = parseFloat(document.getElementById('homePrice').value) || 0;
-                const downPayment = parseFloat(this.value) || 0;
-                document.getElementById('downPaymentPercent').value = ((downPayment / homePrice) * 100).toFixed(1);
-            });
-            document.getElementById('downPaymentPercent').addEventListener('input', function() {
-                const homePrice = parseFloat(document.getElementById('homePrice').value) || 0;
-                const percent = parseFloat(this.value) || 0;
-                document.getElementById('downPayment').value = Math.round((percent / 100) * homePrice);
-            });
-        };
+<!-- AGE -->
+<div id="age" class="tab-content">
+  <div class="card">
+    <div class="calculator-header">
+      <h2>🎂 Age Calculator</h2>
+      <p>Calculate your exact age</p>
+    </div>
+    <div class="input-group">
+      <label>Date of Birth</label>
+      <input type="date" id="dob">
+    </div>
+    <button class="calculate-btn" onclick="calcAge()">Calculate Age</button>
+    <div id="ageResult" class="result">Select your birth date</div>
+  </div>
+</div>
 
-        function syncDownPayment() {
-            const homePrice = parseFloat(document.getElementById('homePrice').value) || 0;
-            const percent = parseFloat(document.getElementById('downPaymentPercent').value) || 0;
-            document.getElementById('downPayment').value = Math.round((percent / 100) * homePrice);
-        }
+<!-- PERCENT -->
+<div id="percent" class="tab-content">
+  <div class="card">
+    <div class="calculator-header">
+      <h2>📊 Percentage Calculator</h2>
+      <p>Calculate percentage value</p>
+    </div>
+    <div class="input-group">
+      <label>Value</label>
+      <input id="part" type="number" placeholder="Part value">
+    </div>
+    <div class="input-group">
+      <label>Total</label>
+      <input id="total" type="number" placeholder="Total value">
+    </div>
+    <button class="calculate-btn" onclick="calcPercentage()">Calculate %</button>
+    <div id="percentResult" class="result">Enter values</div>
+  </div>
+</div>
 
-        function calculateMortgage() {
-            const homePrice = parseFloat(document.getElementById('homePrice').value) || 0;
-            const downPayment = parseFloat(document.getElementById('downPayment').value) || 0;
-            const loanTerm = parseInt(document.getElementById('loanTerm').value) || 30;
-            const interestRate = parseFloat(document.getElementById('interestRate').value) || 0;
-            const propertyTax = parseFloat(document.getElementById('propertyTax').value) || 0;
-            const homeInsurance = parseFloat(document.getElementById('homeInsurance').value) || 0;
-            const includePMI = document.getElementById('includePMI').checked;
+<!-- SIMPLE INTEREST -->
+<div id="si" class="tab-content">
+  <div class="card">
+    <div class="calculator-header">
+      <h2>📈 Simple Interest</h2>
+      <p>Calculate simple interest</p>
+    </div>
+    <div class="input-group">
+      <label>Principal ($)</label>
+      <input id="sip" type="number" placeholder="Principal amount">
+    </div>
+    <div class="input-group">
+      <label>Rate (%)</label>
+      <input id="sir" type="number" placeholder="Annual rate" step="0.1">
+    </div>
+    <div class="input-group">
+      <label>Time (Years)</label>
+      <input id="sit" type="number" placeholder="Duration" step="0.5">
+    </div>
+    <button class="calculate-btn" onclick="calcSI()">Calculate Interest</button>
+    <div id="siResult" class="result">Enter details</div>
+  </div>
+</div>
 
-            const loanAmount = homePrice - downPayment;
-            const monthlyRate = (interestRate / 100) / 12;
-            const numberOfPayments = loanTerm * 12;
+<!-- COMPOUND INTEREST -->
+<div id="ci" class="tab-content">
+  <div class="card">
+    <div class="calculator-header">
+      <h2>💹 Compound Interest</h2>
+      <p>Calculate compound growth</p>
+    </div>
+    <div class="input-group">
+      <label>Principal ($)</label>
+      <input id="ciPrincipal" type="number" placeholder="Initial amount">
+    </div>
+    <div class="input-group">
+      <label>Annual Rate (%)</label>
+      <input id="ciRate" type="number" placeholder="Interest rate" step="0.1">
+    </div>
+    <div class="input-group">
+      <label>Time (Years)</label>
+      <input id="ciTime" type="number" placeholder="Duration" step="0.5">
+    </div>
+    <div class="input-group">
+      <label>Compounds/Year</label>
+      <input id="ciCompounds" type="number" placeholder="e.g., 12 for monthly" value="12">
+    </div>
+    <button class="calculate-btn" onclick="calcCI()">Calculate</button>
+    <div id="ciResult" class="result">Enter investment details</div>
+  </div>
+</div>
 
-            // Principal & Interest
-            let monthlyPI;
-            if (interestRate === 0) {
-                monthlyPI = loanAmount / numberOfPayments;
-            } else {
-                monthlyPI = (loanAmount * monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) / 
-                           (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
-            }
+<!-- DISCOUNT - Fixed IDs -->
+<div id="discount" class="tab-content">
+  <div class="card">
+    <div class="calculator-header">
+      <h2>🏷️ Discount Calculator</h2>
+      <p>Calculate sale price</p>
+    </div>
+    <div class="input-group">
+      <label>Original Price ($)</label>
+      <input id="origPrice" type="number" placeholder="Original price">
+    </div>
+    <div class="input-group">
+      <label>Discount (%)</label>
+      <input id="discPercent" type="number" placeholder="Discount percentage" step="0.1">
+    </div>
+    <button class="calculate-btn" onclick="calcDiscount()">Calculate Price</button>
+    <div id="discountResult" class="result">Enter price details</div>
+  </div>
+</div>
 
-            // Taxes & Insurance
-            const monthlyTax = propertyTax / 12;
-            const monthlyInsurance = homeInsurance / 12;
+<!-- SAVINGS -->
+<div id="savings" class="tab-content">
+  <div class="card">
+    <div class="calculator-header">
+      <h2>🎯 Savings Goal</h2>
+      <p>Time to reach your goal</p>
+    </div>
+    <div class="input-group">
+      <label>Goal Amount ($)</label>
+      <input id="goalAmount" type="number" placeholder="Target amount">
+    </div>
+    <div class="input-group">
+      <label>Monthly Saving ($)</label>
+      <input id="monthlySaving" type="number" placeholder="Monthly contribution">
+    </div>
+    <button class="calculate-btn" onclick="calcSavings()">Calculate Time</button>
+    <div id="savingsResult" class="result">Enter savings plan</div>
+  </div>
+</div>
 
-            // PMI (typically 0.5-1% of loan amount annually)
-            let monthlyPMI = 0;
-            const pmiBox = document.getElementById('pmiBox');
-            if (includePMI || (downPayment / homePrice) < 0.2) {
-                monthlyPMI = (loanAmount * 0.005) / 12;
-                pmiBox.style.display = 'block';
-            } else {
-                pmiBox.style.display = 'none';
-            }
+<!-- AVERAGE -->
+<div id="average" class="tab-content">
+  <div class="card">
+    <div class="calculator-header">
+      <h2>📉 Average Calculator</h2>
+      <p>Find mean of numbers</p>
+    </div>
+    <div class="input-group">
+      <label>Numbers (comma separated)</label>
+      <input id="numbers" type="text" placeholder="e.g., 10, 20, 30, 40">
+    </div>
+    <button class="calculate-btn" onclick="calcAverage()">Calculate Average</button>
+    <div id="averageResult" class="result">Enter numbers</div>
+  </div>
+</div>
 
-            const totalMonthly = monthlyPI + monthlyTax + monthlyInsurance + monthlyPMI;
-            const totalInterest = (monthlyPI * numberOfPayments) - loanAmount;
-            const totalCost = (totalMonthly * numberOfPayments) + downPayment;
+<!-- BINARY -->
+<div id="binary" class="tab-content">
+  <div class="card">
+    <div class="calculator-header">
+      <h2>🔢 Binary Converter</h2>
+      <p>Convert between binary and decimal</p>
+    </div>
+    <div class="input-group">
+      <label>Binary Number</label>
+      <input id="binaryInput" type="text" placeholder="e.g., 1010">
+    </div>
+    <div class="input-group">
+      <label>Decimal Number</label>
+      <input id="decimalInput" type="number" placeholder="e.g., 10">
+    </div>
+    <div class="dual-btn">
+      <button class="calculate-btn" onclick="binaryToDecimal()">Binary → Dec</button>
+      <button class="calculate-btn" onclick="decimalToBinary()">Dec → Binary</button>
+    </div>
+    <div id="binaryResult" class="result">Enter a number to convert</div>
+  </div>
+</div>
 
-            // Update UI
-            document.getElementById('monthlyPayment').textContent = formatCurrency(totalMonthly);
-            document.getElementById('piPayment').textContent = formatCurrency(monthlyPI);
-            document.getElementById('monthlyTax').textContent = formatCurrency(monthlyTax);
-            document.getElementById('monthlyInsurance').textContent = formatCurrency(monthlyInsurance);
-            document.getElementById('monthlyPMI').textContent = formatCurrency(monthlyPMI);
-            document.getElementById('loanAmount').textContent = formatCurrency(loanAmount);
-            document.getElementById('totalInterest').textContent = formatCurrency(totalInterest);
-            document.getElementById('totalCost').textContent = formatCurrency(totalCost);
+</div>
 
-            // Generate amortization schedule
-            generateAmortization(loanAmount, monthlyRate, numberOfPayments, monthlyPI);
+<footer>© 2026 Multi Calculator Hub • 10 Tools in One</footer>
 
-            // Show results
-            document.getElementById('results').classList.remove('hidden');
-            
-            // Scroll to results on mobile
-            if (window.innerWidth < 768) {
-                document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
-            }
-        }
+<script>
+// Theme Management
+function toggleTheme() {
+  const current = document.documentElement.getAttribute("data-theme");
+  const next = current === "dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", next);
+  localStorage.setItem("theme", next);
+  updateThemeUI(next);
+}
 
-        function generateAmortization(balance, monthlyRate, months, monthlyPayment) {
-            const tbody = document.getElementById('amortizationBody');
-            tbody.innerHTML = '';
+function updateThemeUI(theme) {
+  document.getElementById("themeIcon").textContent = theme === "dark" ? "🌙" : "☀️";
+  document.getElementById("themeText").textContent = theme === "dark" ? "Dark" : "Light";
+}
 
-            for (let i = 1; i <= Math.min(months, 12); i++) {
-                const interestPayment = balance * monthlyRate;
-                const principalPayment = monthlyPayment - interestPayment;
-                balance -= principalPayment;
+// Initialize theme
+const savedTheme = localStorage.getItem("theme") || "dark";
+document.documentElement.setAttribute("data-theme", savedTheme);
+updateThemeUI(savedTheme);
 
-                const row = document.createElement('tr');
-                row.className = 'amortization-row border-b border-gray-100';
-                row.innerHTML = `
-                    <td class="px-4 py-3">${i}</td>
-                    <td class="px-4 py-3 text-right">${formatCurrency(monthlyPayment)}</td>
-                    <td class="px-4 py-3 text-right text-green-600">${formatCurrency(principalPayment)}</td>
-                    <td class="px-4 py-3 text-right text-red-500">${formatCurrency(interestPayment)}</td>
-                    <td class="px-4 py-3 text-right font-medium">${formatCurrency(Math.max(0, balance))}</td>
-                `;
-                tbody.appendChild(row);
-            }
-        }
+// Tab Management
+function switchTab(tab) {
+  document.querySelectorAll(".tab-content").forEach(t => t.classList.remove("active"));
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+  document.getElementById(tab).classList.add("active");
+  document.getElementById("tab-" + tab).classList.add("active");
+}
 
-        function formatCurrency(num) {
-            return '$' + num.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-        }
-    </script>
+// Utility
+const formatCurrency = (num) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(num);
 
-    <!-- Structured Data for SEO -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "Mortgage Calculator",
-        "applicationCategory": "FinanceApplication",
-        "offers": {
-            "@type": "Offer",
-            "price": "0",
-            "priceCurrency": "USD"
-        },
-        "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": "4.8",
-            "ratingCount": "1250"
-        }
-    }
-    </script>
+const showResult = (id, main, sub = "", error = false) => {
+  const el = document.getElementById(id);
+  el.innerHTML = `<div class="result-main">${main}</div>${sub ? `<div class="result-sub">${sub}</div>` : ""}`;
+  el.classList.add("show");
+  el.classList.toggle("error", error);
+};
+
+const showError = (id, msg) => showResult(id, "⚠️ Error", msg, true);
+
+// Calculators
+function calcBMI() {
+  const w = parseFloat(document.getElementById("weight").value);
+  const h = parseFloat(document.getElementById("height").value) / 100;
+  if (!w || !h) return showError("bmiResult", "Enter valid weight and height");
+  const bmi = (w / (h * h)).toFixed(1);
+  let cat = bmi < 18.5 ? "Underweight ⚡" : bmi < 25 ? "Normal ✅" : bmi < 30 ? "Overweight ⚠️" : "Obese 🔴";
+  showResult("bmiResult", `BMI: ${bmi}`, `Category: ${cat}`);
+}
+
+function calcEMI() {
+  const p = parseFloat(document.getElementById("loan").value);
+  const r = parseFloat(document.getElementById("rate").value) / 1200;
+  const n = parseFloat(document.getElementById("years").value) * 12;
+  if (!p || !r || !n) return showError("emiResult", "Enter all loan details");
+  const emi = (p * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+  const total = emi * n;
+  showResult("emiResult", formatCurrency(emi) + "/mo", `Total: ${formatCurrency(total)}`);
+}
+
+function calcAge() {
+  const d = new Date(document.getElementById("dob").value);
+  if (!d.getTime()) return showError("ageResult", "Select a valid date");
+  const diff = Date.now() - d.getTime();
+  const age = new Date(diff).getUTCFullYear() - 1970;
+  const months = new Date(diff).getUTCMonth();
+  showResult("ageResult", `${age} Years`, `${months} Months old`);
+}
+
+function calcPercentage() {
+  const p = parseFloat(document.getElementById("part").value);
+  const t = parseFloat(document.getElementById("total").value);
+  if (!p || !t) return showError("percentResult", "Enter both values");
+  showResult("percentResult", `${((p / t) * 100).toFixed(2)}%`, `${p} of ${t}`);
+}
+
+function calcSI() {
+  const p = parseFloat(document.getElementById("sip").value);
+  const r = parseFloat(document.getElementById("sir").value);
+  const t = parseFloat(document.getElementById("sit").value);
+  if (!p || !r || !t) return showError("siResult", "Enter all values");
+  const interest = (p * r * t) / 100;
+  showResult("siResult", formatCurrency(interest), `Total: ${formatCurrency(p + interest)}`);
+}
+
+function calcCI() {
+  const p = parseFloat(document.getElementById("ciPrincipal").value);
+  const r = parseFloat(document.getElementById("ciRate").value) / 100;
+  const t = parseFloat(document.getElementById("ciTime").value);
+  const n = parseFloat(document.getElementById("ciCompounds").value) || 12;
+  if (!p || !r || !t) return showError("ciResult", "Enter all values");
+  const amount = p * Math.pow((1 + r / n), n * t);
+  showResult("ciResult", formatCurrency(amount), `Interest: ${formatCurrency(amount - p)}`);
+}
+
+// Fixed: Discount calculator with correct IDs
+function calcDiscount() {
+  const price = parseFloat(document.getElementById("origPrice").value);
+  const disc = parseFloat(document.getElementById("discPercent").value);
+  if (!price || !disc) return showError("discountResult", "Enter price and discount");
+  const final = price * (1 - disc / 100);
+  showResult("discountResult", formatCurrency(final), `You save: ${formatCurrency(price - final)}`);
+}
+
+function calcSavings() {
+  const goal = parseFloat(document.getElementById("goalAmount").value);
+  const monthly = parseFloat(document.getElementById("monthlySaving").value);
+  if (!goal || !monthly || monthly <= 0) return showError("savingsResult", "Enter valid amounts");
+  const months = Math.ceil(goal / monthly);
+  const years = (months / 12).toFixed(1);
+  showResult("savingsResult", `${months} Months`, `That's about ${years} years`);
+}
+
+function calcAverage() {
+  const nums = document.getElementById("numbers").value.split(',').map(n => parseFloat(n.trim())).filter(n => !isNaN(n));
+  if (nums.length === 0) return showError("averageResult", "Enter valid numbers separated by commas");
+  const avg = nums.reduce((a, b) => a + b, 0) / nums.length;
+  showResult("averageResult", avg.toFixed(2), `Count: ${nums.length} numbers`);
+}
+
+function binaryToDecimal() {
+  const bin = document.getElementById("binaryInput").value.trim();
+  if (!/^[01]+$/.test(bin)) return showError("binaryResult", "Enter valid binary (0s and 1s)");
+  const dec = parseInt(bin, 2);
+  document.getElementById("decimalInput").value = dec;
+  showResult("binaryResult", `Decimal: ${dec}`, `Binary: ${bin}`);
+}
+
+function decimalToBinary() {
+  const dec = parseInt(document.getElementById("decimalInput").value);
+  if (isNaN(dec)) return showError("binaryResult", "Enter valid decimal number");
+  const bin = dec.toString(2);
+  document.getElementById("binaryInput").value = bin;
+  showResult("binaryResult", `Binary: ${bin}`, `Decimal: ${dec}`);
+}
+</script>
 
 </body>
 </html>
